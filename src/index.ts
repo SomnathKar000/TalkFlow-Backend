@@ -1,22 +1,18 @@
 import express from "express";
 import http from "http";
 import { WebSocketServer } from "ws";
+import { handleWebSocketConnection } from "./websocket/socketHandler";
 
 const app = express();
 const server = http.createServer(app);
+
+app.use(express.static("public"));
 
 const port = 5000;
 
 const wss = new WebSocketServer({ server });
 
-wss.on("connection", (ws) => {
-  console.log("client connected");
-
-  ws.on("message", (message) => {
-    console.log("received: %s", message);
-    ws.send(`Hello, you sent -> ${message}`);
-  });
-});
+wss.on("connection", handleWebSocketConnection);
 
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
