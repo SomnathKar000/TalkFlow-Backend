@@ -17,8 +17,8 @@ wss.on("connection", handleWebSocketConnection);
 
 async function start() {
   try {
+    console.log("Starting server...");
     await sequelize.authenticate();
-
     console.log("Database Connection has been established successfully.");
 
     server.listen(port, () => {

@@ -1,52 +1,44 @@
-import { DataTypes, Sequelize, Model } from "sequelize";
+import { Sequelize, DataTypes, Model } from "sequelize";
 import { sequelize } from "../utils/database";
 import { User } from "./User";
 import { Conversation } from "./Conversation";
 
-export class Message extends Model {
-  public messageId!: string;
-  public senderId!: string;
-  public message_text!: string;
+export class ConversationMember extends Model {
+  public userId!: string;
   public conversationId!: string;
-  public readonly date!: Date;
+  public readonly joinedDateTime!: Date;
 }
 
-Message.init(
+ConversationMember.init(
   {
-    messageId: {
-      type: DataTypes.UUID,
-      primaryKey: true,
-      defaultValue: Sequelize.literal("uuid_generate_v4()"),
-    },
-    senderId: {
+    userId: {
       type: DataTypes.UUID,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: User,
         key: "userId",
       },
     },
-    message_text: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     conversationId: {
       type: DataTypes.UUID,
       allowNull: false,
+      primaryKey: true,
       references: {
         model: Conversation,
         key: "conversationId",
       },
     },
-    date: {
+    joinedDateTime: {
       type: DataTypes.DATE,
+      allowNull: false,
       defaultValue: Sequelize.fn("now"),
     },
   },
   {
     sequelize,
-    modelName: "Message",
-    tableName: "messages",
+    modelName: "ConversationMember",
+    tableName: "conversationMembers",
     timestamps: true,
   }
 );
