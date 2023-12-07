@@ -1,13 +1,25 @@
+import "express-async-errors";
 import express from "express";
 import http from "http";
+import bodyParser from "body-parser";
+import cors from "cors";
 import { WebSocketServer } from "ws";
+import userRoutes from "./routes/userRoutes";
 import { handleWebSocketConnection } from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 
 const app = express();
 const server = http.createServer(app);
 
 app.use(express.static("public"));
+app.use(cors());
+app.use(bodyParser.json());
+
+app.use("/api/v1/users", userRoutes);
+
+app.use(errorHandler);
+app.use(notFoundHandler);
 
 const port = 5000;
 
