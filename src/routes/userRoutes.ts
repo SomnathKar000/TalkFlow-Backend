@@ -10,12 +10,13 @@ import {
   loginValidator,
   validationErrorHandler,
 } from "../middleware/validators";
+import { authenticate } from "../middleware/authentication";
 
 const router = Router();
 
 router
   .route("/")
-  .get(getuser)
+  .get(authenticate, getuser)
   .post(createUserValidator, validationErrorHandler, createUser);
 router.route("/login").post(loginValidator, validationErrorHandler, loginUser);
 router.route("/profile").put(updateuser);

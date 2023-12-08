@@ -8,6 +8,7 @@ const authenticate = (
   next: NextFunction
 ) => {
   const token = req.headers["auth-token"];
+
   if (!token) {
     throw new CustomError("Authentication Failed", 401);
   }

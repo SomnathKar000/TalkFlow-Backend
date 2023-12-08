@@ -8,10 +8,11 @@ import {
 } from "../services/UserService";
 import { AuthenticatedRequest } from "../services/UserService";
 import { CustomError } from "../middleware/errorHandling";
+import { User } from "../models/User";
 
 const createUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
-  const user = await findUserByEmailOrUserId({ email });
+  const user = await User.findOne({ where: { email } });
   if (user) {
     throw new CustomError("Email already exists", 400);
   }
@@ -46,6 +47,7 @@ const getuser = async (req: AuthenticatedRequest, res: Response) => {
     throw new CustomError("Invalid user", 404);
   }
   const { email, name } = await findUserByEmailOrUserId({ userId: user.id });
+
   res.status(200).json({
     success: true,
     message: "User fetched successfully",
