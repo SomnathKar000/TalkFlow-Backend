@@ -4,20 +4,20 @@ import { User } from "./User";
 import { Conversation } from "./Conversation";
 
 export class ConversationMember extends Model {
-  public userId!: string;
+  public emailId!: string;
   public conversationId!: string;
   public readonly joinedDateTime!: Date;
 }
 
 ConversationMember.init(
   {
-    userId: {
-      type: DataTypes.UUID,
+    emailId: {
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
       references: {
         model: User,
-        key: "userId",
+        key: "email",
       },
     },
     conversationId: {
