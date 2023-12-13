@@ -3,7 +3,7 @@ import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { WebSocketServer } from "ws";
+import { Server as WebSocketServer, WebSocket } from "ws";
 import userRoutes from "./routes/userRoutes";
 import { handleWebSocketConnection } from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
@@ -25,7 +25,9 @@ const port = 5000;
 
 const wss = new WebSocketServer({ server });
 
-wss.on("connection", handleWebSocketConnection);
+const clients = new Map<string, WebSocket>();
+
+wss.on("connection", (socket) => handleWebSocketConnection(socket, clients));
 
 async function start() {
   try {

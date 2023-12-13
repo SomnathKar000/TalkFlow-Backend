@@ -1,4 +1,4 @@
-import * as WebSocket from "ws";
+import { WebSocket } from "ws";
 import {
   handleSetupEvent,
   handleJoinEvent,
@@ -16,14 +16,17 @@ interface ChatMessage {
   sender: UserData;
 }
 
-function handleWebSocketConnection(socket: WebSocket) {
+function handleWebSocketConnection(
+  socket: WebSocket,
+  clients: Map<string, WebSocket>
+) {
   console.log("client connected");
 
   socket.on("message", (data: string) => {
     const jsonData = JSON.parse(data.toString());
     switch (jsonData.event) {
       case "setup":
-        handleJoinEvent(socket, jsonData.data);
+        handleSetupEvent(socket, jsonData.data, clients);
         break;
       case "join chat":
         handleJoinEvent(socket, jsonData.data);
