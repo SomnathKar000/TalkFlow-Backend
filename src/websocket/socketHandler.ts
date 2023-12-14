@@ -5,20 +5,22 @@ import {
   handleTypingEvent,
   handleNewMessageEvent,
   handleStopTypingEvent,
+  handleDisconnectEvent,
 } from "../controllers/socketController";
 interface UserData {
   emailId: string;
 }
 
-interface ChatMessage {
-  chatMembers: UserData[];
-  message: string;
-  sender: UserData;
+interface ChatRoom {
+  roomId: string;
+  users: UserData[];
 }
 
 function handleWebSocketConnection(
   socket: WebSocket,
-  clients: Map<string, WebSocket>
+  userDataMap: Map<string, UserData>,
+  socketRoomMap: Map<WebSocket, string>,
+  chatRooms: Map<string, ChatRoom>
 ) {
   console.log("client connected");
 
@@ -26,19 +28,19 @@ function handleWebSocketConnection(
     const jsonData = JSON.parse(data.toString());
     switch (jsonData.event) {
       case "setup":
-        handleSetupEvent(socket, jsonData.data, clients);
+        handleSetupEvent(socket, jsonData.data, userDataMap, socketRoomMap);
         break;
       case "join chat":
-        handleJoinEvent(socket, jsonData.data);
+        handleJoinEvent(socket, jsonData.data, userDataMap, chatRooms);
         break;
       case "typing":
-        handleTypingEvent(socket, jsonData.data);
+        handleTypingEvent(socket, socketRoomMap);
         break;
       case "stop typing":
-        handleStopTypingEvent(socket, jsonData.data);
+        handleStopTypingEvent(socket, socketRoomMap);
         break;
       case "new message":
-        handleNewMessageEvent(socket, jsonData.data);
+        handleNewMessageEvent(socket, jsonData.data, socketRoomMap);
         break;
       default:
         break;
@@ -46,8 +48,8 @@ function handleWebSocketConnection(
   });
 
   socket.on("close", () => {
-    console.log("Client disconnected");
+    handleDisconnectEvent(socket, socketRoomMap, chatRooms);
   });
 }
 
-export { handleWebSocketConnection, UserData, ChatMessage };
+export { handleWebSocketConnection, UserData, ChatRoom };

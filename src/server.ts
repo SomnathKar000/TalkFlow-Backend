@@ -5,7 +5,11 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { Server as WebSocketServer, WebSocket } from "ws";
 import userRoutes from "./routes/userRoutes";
-import { handleWebSocketConnection } from "./websocket/socketHandler";
+import {
+  handleWebSocketConnection,
+  ChatRoom,
+  UserData,
+} from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 
@@ -25,9 +29,13 @@ const port = 5000;
 
 const wss = new WebSocketServer({ server });
 
-const clients = new Map<string, WebSocket>();
+const userDataMap = new Map<string, UserData>();
+const socketRoomMap = new Map<WebSocket, string>();
+const chatRooms = new Map<string, ChatRoom>();
 
-wss.on("connection", (socket) => handleWebSocketConnection(socket, clients));
+wss.on("connection", (socket) =>
+  handleWebSocketConnection(socket, userDataMap, socketRoomMap, chatRooms)
+);
 
 async function start() {
   try {
