@@ -3,13 +3,9 @@ import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { Server as WebSocketServer, WebSocket } from "ws";
+import { Server as SocketIoServer, Socket } from "socket.io";
 import userRoutes from "./routes/userRoutes";
-import {
-  handleWebSocketConnection,
-  ChatRoom,
-  UserData,
-} from "./websocket/socketHandler";
+import { handleWebSocketConnection } from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 
@@ -27,15 +23,14 @@ app.use(notFoundHandler);
 
 const port = 5000;
 
-const wss = new WebSocketServer({ server });
+const io = new SocketIoServer(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
-const userDataMap = new Map<string, UserData>();
-const socketRoomMap = new Map<WebSocket, string>();
-const chatRooms = new Map<string, ChatRoom>();
-
-wss.on("connection", (socket) =>
-  handleWebSocketConnection(socket, userDataMap, socketRoomMap, chatRooms)
-);
+io.on("connection", (socket) => handleWebSocketConnection(socket));
 
 async function start() {
   try {

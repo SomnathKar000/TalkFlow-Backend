@@ -1,55 +1,28 @@
-import { WebSocket } from "ws";
-import {
-  handleSetupEvent,
-  handleJoinEvent,
-  handleTypingEvent,
-  handleNewMessageEvent,
-  handleStopTypingEvent,
-  handleDisconnectEvent,
-} from "../controllers/socketController";
+import { Socket } from "socket.io";
+
 interface UserData {
   emailId: string;
 }
 
-interface ChatRoom {
-  roomId: string;
-  users: UserData[];
-}
-
-function handleWebSocketConnection(
-  socket: WebSocket,
-  userDataMap: Map<string, UserData>,
-  socketRoomMap: Map<WebSocket, string>,
-  chatRooms: Map<string, ChatRoom>
-) {
+function handleWebSocketConnection(socket: Socket) {
   console.log("client connected");
-
-  socket.on("message", (data: string) => {
-    const jsonData = JSON.parse(data.toString());
-    switch (jsonData.event) {
-      case "setup":
-        handleSetupEvent(socket, jsonData.data, userDataMap, socketRoomMap);
-        break;
-      case "join chat":
-        handleJoinEvent(socket, jsonData.data, userDataMap, chatRooms);
-        break;
-      case "typing":
-        handleTypingEvent(socket, socketRoomMap);
-        break;
-      case "stop typing":
-        handleStopTypingEvent(socket, socketRoomMap);
-        break;
-      case "new message":
-        handleNewMessageEvent(socket, jsonData.data, socketRoomMap);
-        break;
-      default:
-        break;
-    }
+  socket.on("setup", (user: UserData) => {
+    socket.join(user.emailId);
+    socket.emit("Connected");
   });
 
-  socket.on("close", () => {
-    handleDisconnectEvent(socket, socketRoomMap, chatRooms);
+  socket.on("join chat", (room) => {
+    console.log("User joined room: " + room);
+    socket.join(room);
+  });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.off("setup", (user: UserData) => {
+    console.log("client disconnected");
+    socket.leave(user.emailId);
   });
 }
 
-export { handleWebSocketConnection, UserData, ChatRoom };
+export { handleWebSocketConnection, UserData };
