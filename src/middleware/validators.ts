@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body, validationResult, param } from "express-validator";
 import { Request, Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../services/UserService";
 import { CustomError } from "../middleware/errorHandling";
@@ -9,6 +9,15 @@ const loginValidator = [
 ];
 const createUserValidator = loginValidator.concat([
   body("name").isLength({ min: 3 }).withMessage("Invalid Name"),
+]);
+
+const getConversationValidator = [
+  param("conversationId")
+    .isLength({ min: 3 })
+    .withMessage("Invalid Conversation Id"),
+];
+const newMessageValidator = getConversationValidator.concat([
+  body("message").isLength({ min: 3 }).withMessage("Invalid Message"),
 ]);
 
 const validationErrorHandler = (
@@ -23,4 +32,9 @@ const validationErrorHandler = (
   next();
 };
 
-export { loginValidator, createUserValidator, validationErrorHandler };
+export {
+  loginValidator,
+  createUserValidator,
+  newMessageValidator,
+  validationErrorHandler,
+};

@@ -36,4 +36,17 @@ const newMessage = async (
   }
 };
 
-export { getallMessages, newMessage };
+const getConversationMessages = async (conversationId: string) => {
+  try {
+    const messages = await Message.findAll({
+      where: {
+        conversationId,
+      },
+      order: [["date", "ASC"]],
+    });
+  } catch (error) {
+    throw new CustomError("Unable to get messages", 400);
+  }
+};
+
+export { getallMessages, newMessage, getConversationMessages };
