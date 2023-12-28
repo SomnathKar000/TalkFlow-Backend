@@ -43,4 +43,84 @@ const getAllConversationData = async (email: string | undefined) => {
   }
 };
 
-export { getAllConversationData };
+const createOneToOneConversation = async (
+  userEmail: string,
+  senderEmail: string
+): Promise<Conversation> => {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: senderEmail,
+      },
+    });
+    if (!user) {
+      throw new CustomError("User does not exist", 400);
+    }
+
+    const conversation = await Conversation.create({ isGroup: false });
+    await ConversationMember.create({
+      emailId: userEmail,
+      conversationId: conversation.conversationId,
+    });
+    await ConversationMember.create({
+      emailId: senderEmail,
+      conversationId: conversation.conversationId,
+    });
+    return conversation;
+  } catch (error) {
+    throw new CustomError("Unable to create conversation", 400);
+  }
+};
+
+const createGroupConversation = async (
+  userEmail: string,
+  groupName: string
+): Promise<Conversation> => {
+  try {
+    const conversation = await Conversation.create({
+      isGroup: true,
+      conversationName: groupName,
+      groupAdmin: userEmail,
+    });
+    await ConversationMember.create({
+      emailId: userEmail,
+      conversationId: conversation.conversationId,
+    });
+
+    return conversation;
+  } catch (error) {
+    throw new CustomError("Unable to create conversation", 400);
+  }
+};
+
+const addToGroup = async (
+  adminEmail: string,
+  conversationId: string,
+  userEmail: string
+) => {
+  try {
+    const user = await User.findOne({ where: { email: userEmail } });
+    if (!user) {
+      throw new CustomError("User does not exist", 400);
+    }
+    const conversation = await Conversation.findOne({
+      where: { conversationId, groupAdmin: adminEmail },
+    });
+    if (!conversation) {
+      throw new CustomError("Conversation does not exist", 400);
+    }
+    await ConversationMember.create({
+      emailId: userEmail,
+      conversationId: conversationId,
+    });
+  } catch (error) {
+    throw new CustomError("Unable to add user to group", 400);
+  }
+};
+
+export {
+  getAllConversationData,
+  createOneToOneConversation,
+  createGroupConversation,
+  addToGroup,
+};
