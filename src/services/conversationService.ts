@@ -118,9 +118,57 @@ const addToGroup = async (
   }
 };
 
+const removeFromGroup = async (
+  adminEmail: string,
+  conversationId: string,
+  userEmail: string
+) => {
+  try {
+    const conversation = await Conversation.findOne({
+      where: { conversationId, groupAdmin: adminEmail },
+    });
+    if (!conversation) {
+      throw new CustomError("Conversation does not exist", 400);
+    }
+    const members = await ConversationMember.findAll({
+      where: { conversationId },
+    });
+    members.forEach(async (member) => {
+      if (member.emailId === userEmail) {
+        await member.destroy();
+      }
+    });
+    await ConversationMember.destroy({
+      where: { emailId: userEmail, conversationId },
+    });
+  } catch (error) {
+    throw new CustomError("Unable to remove user from group", 400);
+  }
+};
+
+const renameGroupChat = async (
+  adminEmail: string,
+  conversationId: string,
+  newGroupName: string
+) => {
+  try {
+    const group = await Conversation.findOne({
+      where: { conversationId, groupAdmin: adminEmail },
+    });
+    if (!group) {
+      throw new CustomError("Conversation does not exist", 400);
+    }
+    await group.update({ conversationName: newGroupName });
+  } catch (error) {
+    throw new CustomError("Unable to rename group chat", 400);
+  }
+};
+
 export {
   getAllConversationData,
   createOneToOneConversation,
   createGroupConversation,
   addToGroup,
+  removeFromGroup,
+  renameGroupChat,
 };
