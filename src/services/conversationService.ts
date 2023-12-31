@@ -93,7 +93,7 @@ const createGroupConversation = async (
   }
 };
 
-const addToGroup = async (
+const addToGroupService = async (
   adminEmail: string,
   conversationId: string,
   userEmail: string
@@ -118,7 +118,7 @@ const addToGroup = async (
   }
 };
 
-const removeFromGroup = async (
+const removeFromGroupService = async (
   adminEmail: string,
   conversationId: string,
   userEmail: string
@@ -146,7 +146,7 @@ const removeFromGroup = async (
   }
 };
 
-const renameGroupChat = async (
+const renameGroupChatService = async (
   adminEmail: string,
   conversationId: string,
   newGroupName: string
@@ -168,7 +168,7 @@ export {
   getAllConversationData,
   createOneToOneConversation,
   createGroupConversation,
-  addToGroup,
-  removeFromGroup,
-  renameGroupChat,
+  addToGroupService,
+  removeFromGroupService,
+  renameGroupChatService,
 };
