@@ -1,4 +1,9 @@
-import { Sequelize, DataTypes, Model } from "sequelize";
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  BelongsToGetAssociationMixin,
+} from "sequelize";
 import { sequelize } from "../utils/database";
 import { User } from "./User";
 import { Conversation } from "./Conversation";
@@ -7,6 +12,9 @@ export class ConversationMember extends Model {
   public emailId!: string;
   public conversationId!: string;
   public readonly joinedDateTime!: Date;
+
+  public getUser!: BelongsToGetAssociationMixin<User>;
+  public getConversation!: BelongsToGetAssociationMixin<Conversation>;
 }
 
 ConversationMember.init(

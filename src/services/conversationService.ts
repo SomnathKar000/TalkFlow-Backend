@@ -1,5 +1,5 @@
 import { User } from "../models/User";
-import { Message } from "../models/Message";
+import { sequelize } from "../utils/database";
 import { Conversation } from "../models/Conversation";
 import { ConversationMember } from "../models/ConversationMember";
 import { CustomError } from "../middleware/errorHandling";
@@ -18,24 +18,9 @@ const getAllConversationData = async (email: string | undefined) => {
     if (!user) {
       throw new CustomError("User does not exist", 400);
     }
-    const conversationData = await ConversationMember.findAll({
-      where: {
-        userId: user.email,
-      },
-      include: [
-        {
-          model: Conversation,
-          include: [
-            User,
-            {
-              model: Message,
-              limit: 1,
-              order: [["createdAt", "DESC"]],
-            },
-          ],
-        },
-      ],
-    });
+    const conversationData = await sequelize.query(
+      `SELECT * FROM conversation WHERE conversationId IN (SELECT DISTINCT conversationId FROM conversation_member WHERE emailId = '${user.email}')`
+    );
     return conversationData;
   } catch (error) {
     console.log("Error in getAllConversationData:", error);

@@ -1,5 +1,11 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
+import {
+  Model,
+  DataTypes,
+  Sequelize,
+  HasManyAddAssociationMixin,
+} from "sequelize";
 import { sequelize } from "../utils/database";
+import { ConversationMember } from "./ConversationMember";
 
 export class Conversation extends Model {
   public conversationId!: string;
@@ -8,6 +14,8 @@ export class Conversation extends Model {
   public latestMessage!: string;
   public groupAdmin!: string;
   public readonly createdAt!: Date;
+
+  public getMembers!: HasManyAddAssociationMixin<ConversationMember, string>;
 }
 
 Conversation.init(

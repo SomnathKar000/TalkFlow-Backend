@@ -14,7 +14,6 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 const app = express();
 const server = http.createServer(app);
 
-app.use(express.static("public"));
 app.use(cors());
 app.use(bodyParser.json());
 
