@@ -50,3 +50,11 @@ ConversationMember.init(
     timestamps: true,
   }
 );
+
+ConversationMember.belongsTo(User, {
+  foreignKey: "emailId",
+});
+
+ConversationMember.belongsTo(Conversation, {
+  foreignKey: "conversationId",
+});

@@ -8,20 +8,33 @@ import {
 } from "../controllers/conversationController";
 
 import {
-  createUserValidator,
+  addOrRemoveFromGroupValidator,
   validationErrorHandler,
+  createGroupChatValidator,
+  renameGroupChatValidator,
+  createConversationValidator,
 } from "../middleware/validators";
 
 const router = Router();
 
-router.route("/").post(createConversation);
-router.route("/group").post(createGroupChat);
-router.route("/rename").put(renameGroupChat);
+router
+  .route("/")
+  .post(
+    createConversationValidator,
+    validationErrorHandler,
+    createConversation
+  );
+router
+  .route("/group")
+  .post(createGroupChatValidator, validationErrorHandler, createGroupChat);
+router
+  .route("/rename")
+  .put(renameGroupChatValidator, validationErrorHandler, renameGroupChat);
 router
   .route("/add/:conversationId")
-  .put(createUserValidator, validationErrorHandler, addToGroup);
+  .put(addOrRemoveFromGroupValidator, validationErrorHandler, addToGroup);
 router
   .route("/remove/:conversationId")
-  .put(createUserValidator, validationErrorHandler, removeFromGroup);
+  .put(addOrRemoveFromGroupValidator, validationErrorHandler, removeFromGroup);
 
 export default router;

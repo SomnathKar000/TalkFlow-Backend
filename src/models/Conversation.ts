@@ -51,3 +51,8 @@ Conversation.init(
     modelName: "Conversation",
   }
 );
+
+Conversation.hasMany(ConversationMember, {
+  foreignKey: "conversationId",
+  sourceKey: "conversationId",
+});
