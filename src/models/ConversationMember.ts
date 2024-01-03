@@ -13,8 +13,8 @@ export class ConversationMember extends Model {
   public conversationId!: string;
   public readonly joinedDateTime!: Date;
 
-  public getUser!: BelongsToGetAssociationMixin<User>;
-  public getConversation!: BelongsToGetAssociationMixin<Conversation>;
+  // public getUser!: BelongsToGetAssociationMixin<User>;
+  // public getConversation!: BelongsToGetAssociationMixin<Conversation>;
 }
 
 ConversationMember.init(
@@ -51,10 +51,10 @@ ConversationMember.init(
   }
 );
 
-ConversationMember.belongsTo(User, {
-  foreignKey: "emailId",
-});
+// ConversationMember.belongsTo(User, {
+//   foreignKey: "emailId",
+// });
 
-ConversationMember.belongsTo(Conversation, {
-  foreignKey: "conversationId",
-});
+// ConversationMember.belongsTo(Conversation, {
+//   foreignKey: "conversationId",
+// });

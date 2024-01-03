@@ -15,7 +15,7 @@ export class Conversation extends Model {
   public groupAdmin!: string;
   public readonly createdAt!: Date;
 
-  public getMembers!: HasManyAddAssociationMixin<ConversationMember, string>;
+  // public getMembers!: HasManyAddAssociationMixin<ConversationMember, string>;
 }
 
 Conversation.init(
@@ -52,7 +52,7 @@ Conversation.init(
   }
 );
 
-Conversation.hasMany(ConversationMember, {
-  foreignKey: "conversationId",
-  sourceKey: "conversationId",
-});
+// Conversation.hasMany(ConversationMember, {
+//   foreignKey: "conversationId",
+//   sourceKey: "conversationId",
+// });
