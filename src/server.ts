@@ -3,7 +3,7 @@ import express from "express";
 import http from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { Server as SocketIoServer, Socket } from "socket.io";
+import { Server as SocketIoServer } from "socket.io";
 import userRoutes from "./routes/userRoutes";
 import messageRoutes from "./routes/messageRoutes";
 import { authenticate } from "./middleware/authentication";

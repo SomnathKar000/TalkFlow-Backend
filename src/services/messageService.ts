@@ -1,4 +1,5 @@
 import { CustomError } from "../middleware/errorHandling";
+import { Conversation } from "../models/Conversation";
 import { Message } from "../models/Message";
 
 const getallMessages = async (conversationId: string | undefined) => {
@@ -25,6 +26,17 @@ const newMessage = async (
   conversationId: string
 ) => {
   try {
+    const conversation = await Conversation.findOne({
+      where: {
+        conversationId,
+      },
+    });
+    if (!conversation) {
+      throw new CustomError("Conversation does not exist", 400);
+    }
+    if (conversation.isGroup) {
+      await conversation.update({ latestMessage: message_text });
+    }
     await Message.create({
       senderId,
       message_text,
