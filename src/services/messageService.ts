@@ -48,7 +48,9 @@ const newMessage = async (
   }
 };
 
-const getConversationMessages = async (conversationId: string) => {
+const getConversationMessages = async (
+  conversationId: string
+): Promise<Message[]> => {
   try {
     const messages = await Message.findAll({
       where: {
@@ -56,6 +58,7 @@ const getConversationMessages = async (conversationId: string) => {
       },
       order: [["date", "ASC"]],
     });
+    return messages;
   } catch (error) {
     throw new CustomError("Unable to get messages", 400);
   }
