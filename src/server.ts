@@ -10,12 +10,15 @@ import { authenticate } from "./middleware/authentication";
 import { handleWebSocketConnection } from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
+import { rateLimiter } from "./middleware/rateLimiter";
 
 const app = express();
 const server = http.createServer(app);
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(rateLimiter);
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/message", authenticate, messageRoutes);
