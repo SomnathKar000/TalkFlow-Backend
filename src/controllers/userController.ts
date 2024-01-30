@@ -23,6 +23,10 @@ const createUser = async (req: Request, res: Response) => {
     success: true,
     message: "User created successfully",
     token,
+    user: {
+      name,
+      email,
+    },
   });
 };
 
@@ -37,6 +41,10 @@ const loginUser = async (req: Request, res: Response) => {
     success: true,
     message: "User logged in successfully",
     token,
+    user: {
+      email: user.email,
+      name: user.name,
+    },
   });
 };
 
