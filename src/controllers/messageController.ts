@@ -1,5 +1,8 @@
 import { Response } from "express";
-import { AuthenticatedRequest } from "../services/UserService";
+import {
+  AuthenticatedRequest,
+  findUserByEmailOrUserId,
+} from "../services/UserService";
 import {
   getallMessages,
   newMessage,
@@ -7,12 +10,10 @@ import {
 } from "../services/messageService";
 import { CustomError } from "../middleware/errorHandling";
 
-const getAllMessages = (req: AuthenticatedRequest, res: Response) => {
-  const { email } = req.body;
-  if (!email) {
-    throw new CustomError("Email is required", 400);
-  }
-  const messages = getallMessages(email);
+const getAllMessages = async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user?.id;
+  const user = await findUserByEmailOrUserId({ userId });
+  const messages = await getallMessages(user.email);
 
   res.status(200).json({
     success: true,
