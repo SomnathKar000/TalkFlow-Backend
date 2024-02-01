@@ -1,20 +1,30 @@
 import { CustomError } from "../middleware/errorHandling";
 import { Conversation } from "../models/Conversation";
 import { Message } from "../models/Message";
+import { sequelize } from "../utils/database";
 
-const getallMessages = async (conversationId: string | undefined) => {
-  if (!conversationId) {
+const getallMessages = async (email: string | undefined) => {
+  if (!email) {
     throw new CustomError("Invalid data", 400);
   }
 
   try {
-    const messages = await Message.findAll({
+    const conversations = await Conversation.findAll({
       where: {
-        conversationId,
+        messages: {
+          where: { senderId: email },
+        },
       },
-      order: [["date", "ASC"]],
+      order: [["messages.date", "ASE"]],
+      include: [
+        {
+          model: Message,
+          where: { senderId: email },
+          order: [["date", "ASE"]],
+        },
+      ],
     });
-    return messages;
+    return conversations;
   } catch (error) {
     throw new CustomError("Unable to get messages", 400);
   }
