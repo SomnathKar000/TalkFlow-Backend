@@ -19,7 +19,7 @@ const getAllConversationData = async (email: string | undefined) => {
       throw new CustomError("User does not exist", 400);
     }
     const conversationData = await sequelize.query(
-      `SELECT * FROM conversation WHERE conversationId IN (SELECT DISTINCT conversationId FROM conversation_member WHERE emailId = '${user.email}')`
+      `SELECT * FROM conversation WHERE conversationId IN (SELECT DISTINCT conversationId FROM ConversationMembers WHERE emailId = '${user.email}')`
     );
     return conversationData;
   } catch (error) {
@@ -53,6 +53,7 @@ const createOneToOneConversation = async (
     });
     return conversation;
   } catch (error) {
+    console.log(error);
     throw new CustomError("Unable to create conversation", 400);
   }
 };

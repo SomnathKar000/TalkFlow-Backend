@@ -1,10 +1,6 @@
-import {
-  Model,
-  DataTypes,
-  Sequelize,
-  HasManyAddAssociationMixin,
-} from "sequelize";
+import { Model, DataTypes, Sequelize } from "sequelize";
 import { sequelize } from "../utils/database";
+import { Message } from "./Message";
 import { ConversationMember } from "./ConversationMember";
 
 export class Conversation extends Model {
@@ -52,7 +48,12 @@ Conversation.init(
   }
 );
 
-// Conversation.hasMany(ConversationMember, {
-//   foreignKey: "conversationId",
-//   sourceKey: "conversationId",
-// });
+Conversation.hasMany(Message, {
+  foreignKey: "conversationId",
+  sourceKey: "conversationId",
+});
+
+Conversation.hasMany(ConversationMember, {
+  foreignKey: "conversationId",
+  sourceKey: "conversationId",
+});

@@ -46,7 +46,7 @@ ConversationMember.init(
   {
     sequelize,
     modelName: "ConversationMember",
-    tableName: "conversationMembers",
+    tableName: "conversationmembers",
     timestamps: true,
   }
 );

@@ -7,25 +7,20 @@ const getallMessages = async (email: string | undefined) => {
   if (!email) {
     throw new CustomError("Invalid data", 400);
   }
-
+  console.log(email);
   try {
-    const conversations = await Conversation.findAll({
-      where: {
-        messages: {
-          where: { senderId: email },
-        },
-      },
-      order: [["messages.date", "ASE"]],
-      include: [
-        {
-          model: Message,
-          where: { senderId: email },
-          order: [["date", "ASE"]],
-        },
-      ],
-    });
+    const conversations = await sequelize.query(
+      `SELECT *
+      FROM conversation c
+      WHERE c.conversationId IN (
+        SELECT DISTINCT conversationId
+        FROM conversationmembers cm
+        WHERE cm.emailId = 'som@gmail'
+      );`
+    );
     return conversations;
   } catch (error) {
+    console.log(error);
     throw new CustomError("Unable to get messages", 400);
   }
 };

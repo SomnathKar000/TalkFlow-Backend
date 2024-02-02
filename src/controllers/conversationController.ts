@@ -11,7 +11,7 @@ import {
 
 const createConversation = async (req: AuthenticatedRequest, res: Response) => {
   const { senderEmail } = req.body;
-  const userId = req.user!.id;
+  const userId = req.user?.id;
 
   const user = await findUserByEmailOrUserId({ userId });
 
@@ -27,7 +27,7 @@ const createConversation = async (req: AuthenticatedRequest, res: Response) => {
 };
 const createGroupChat = async (req: AuthenticatedRequest, res: Response) => {
   const { groupName } = req.body;
-  const userId = req.user!.id;
+  const userId = req.user?.id;
 
   const user = await findUserByEmailOrUserId({ userId });
 
