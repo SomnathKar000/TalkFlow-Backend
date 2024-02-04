@@ -2,6 +2,7 @@ import { CustomError } from "../middleware/errorHandling";
 import { Conversation } from "../models/Conversation";
 import { ConversationMember } from "../models/ConversationMember";
 import { Message } from "../models/Message";
+import { User } from "../models/User";
 
 const getallMessages = async (email: string | undefined) => {
   if (!email) {
@@ -13,12 +14,11 @@ const getallMessages = async (email: string | undefined) => {
       where: {
         emailId: email,
       },
-      attributes: ["conversationId"],
     });
     const conversations = await Promise.all(
       conversationIds.map(
         async ({ conversationId }) =>
-          await Conversation.findAll({ where: { conversationId } })
+          await Conversation.findConversationWithMembers(conversationId)
       )
     );
 
@@ -43,9 +43,16 @@ const newMessage = async (
     if (!conversation) {
       throw new CustomError("Conversation does not exist", 400);
     }
+    const user = await User.findOne({
+      where: { userId: senderId },
+    });
+    if (!user) {
+      throw new CustomError("User does not exist", 400);
+    }
     await conversation.update({ latestMessage: message_text });
     await Message.create({
       senderId,
+      senderName: user.name,
       message_text,
       conversationId,
     });

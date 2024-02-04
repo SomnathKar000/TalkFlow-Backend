@@ -2,7 +2,7 @@ import {
   Sequelize,
   DataTypes,
   Model,
-  BelongsToGetAssociationMixin,
+  HasManyAddAssociationMixin,
 } from "sequelize";
 import { sequelize } from "../utils/database";
 import { User } from "./User";
@@ -12,9 +12,6 @@ export class ConversationMember extends Model {
   public emailId!: string;
   public conversationId!: string;
   public readonly joinedDateTime!: Date;
-
-  // public getUser!: BelongsToGetAssociationMixin<User>;
-  // public getConversation!: BelongsToGetAssociationMixin<Conversation>;
 }
 
 ConversationMember.init(
@@ -50,11 +47,3 @@ ConversationMember.init(
     timestamps: true,
   }
 );
-
-// ConversationMember.belongsTo(User, {
-//   foreignKey: "emailId",
-// });
-
-// ConversationMember.belongsTo(Conversation, {
-//   foreignKey: "conversationId",
-// });

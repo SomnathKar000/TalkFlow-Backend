@@ -14,6 +14,7 @@ import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 import { rateLimiter } from "./middleware/rateLimiter";
 import { Conversation } from "./models/Conversation";
 import { ConversationMember } from "./models/ConversationMember";
+import { Message } from "./models/Message";
 
 const app = express();
 const server = http.createServer(app);
@@ -46,8 +47,6 @@ async function start() {
     console.log("Starting server...");
 
     await sequelize.authenticate();
-    // await Conversation.sync();
-    // await ConversationMember.sync();
 
     console.log("Database Connection has been established successfully.");
 

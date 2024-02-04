@@ -6,6 +6,7 @@ import { Conversation } from "./Conversation";
 export class Message extends Model {
   public messageId!: string;
   public senderId!: string;
+  public senderName!: string;
   public message_text!: string;
   public conversationId!: string;
   public readonly date!: Date;
@@ -25,6 +26,10 @@ Message.init(
         model: User,
         key: "userId",
       },
+    },
+    senderName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     message_text: {
       type: DataTypes.STRING,

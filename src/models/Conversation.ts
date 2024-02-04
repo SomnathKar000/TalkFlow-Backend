@@ -1,4 +1,9 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
+import {
+  Model,
+  DataTypes,
+  Sequelize,
+  HasManyAddAssociationMixin,
+} from "sequelize";
 import { sequelize } from "../utils/database";
 import { Message } from "./Message";
 import { ConversationMember } from "./ConversationMember";
@@ -11,7 +16,22 @@ export class Conversation extends Model {
   public groupAdmin!: string;
   public readonly createdAt!: Date;
 
-  // public getMembers!: HasManyAddAssociationMixin<ConversationMember, string>;
+  public getMembers!: HasManyAddAssociationMixin<ConversationMember, string>;
+  public static async findConversationWithMembers(conversationId: string) {
+    return this.findByPk(conversationId, {
+      include: [
+        {
+          model: Message,
+          where: { conversationId },
+          attributes: ["messageId", "senderName", "message_text", "date"],
+        },
+        {
+          model: ConversationMember,
+          where: { conversationId },
+        },
+      ],
+    });
+  }
 }
 
 Conversation.init(
