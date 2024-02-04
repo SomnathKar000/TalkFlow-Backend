@@ -1,7 +1,7 @@
 import { CustomError } from "../middleware/errorHandling";
 import { Conversation } from "../models/Conversation";
+import { ConversationMember } from "../models/ConversationMember";
 import { Message } from "../models/Message";
-import { sequelize } from "../utils/database";
 
 const getallMessages = async (email: string | undefined) => {
   if (!email) {
@@ -9,15 +9,19 @@ const getallMessages = async (email: string | undefined) => {
   }
   console.log(email);
   try {
-    const conversations = await sequelize.query(
-      `SELECT *
-      FROM conversation c
-      WHERE c.conversationId IN (
-        SELECT DISTINCT conversationId
-        FROM conversationmembers cm
-        WHERE cm.emailId = 'som@gmail'
-      );`
+    const conversationIds = await ConversationMember.findAll({
+      where: {
+        emailId: email,
+      },
+      attributes: ["conversationId"],
+    });
+    const conversations = await Promise.all(
+      conversationIds.map(
+        async ({ conversationId }) =>
+          await Conversation.findAll({ where: { conversationId } })
+      )
     );
+
     return conversations;
   } catch (error) {
     console.log(error);
@@ -39,9 +43,7 @@ const newMessage = async (
     if (!conversation) {
       throw new CustomError("Conversation does not exist", 400);
     }
-    if (conversation.isGroup) {
-      await conversation.update({ latestMessage: message_text });
-    }
+    await conversation.update({ latestMessage: message_text });
     await Message.create({
       senderId,
       message_text,
