@@ -29,26 +29,33 @@ const getAllConversationData = async (email: string | undefined) => {
 };
 
 const createOneToOneConversation = async (
-  userEmail: string,
+  userId: string,
   senderEmail: string
 ): Promise<Conversation> => {
   try {
-    const user = await User.findOne({
+    const user1 = await User.findOne({
       where: {
         email: senderEmail,
       },
     });
-    if (!user) {
+    const user2 = await User.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!user1 || !user2) {
       throw new CustomError("User does not exist", 400);
     }
 
     const conversation = await Conversation.create({ isGroup: false });
     await ConversationMember.create({
-      emailId: userEmail,
+      emailId: user2.email,
+      userName: user2.name,
       conversationId: conversation.conversationId,
     });
     await ConversationMember.create({
       emailId: senderEmail,
+      userName: user1.name,
       conversationId: conversation.conversationId,
     });
     return conversation;
@@ -59,17 +66,26 @@ const createOneToOneConversation = async (
 };
 
 const createGroupConversation = async (
-  userEmail: string,
+  userId: string,
   groupName: string
 ): Promise<Conversation> => {
   try {
+    const user = await User.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!user) {
+      throw new CustomError("User does not exist", 400);
+    }
     const conversation = await Conversation.create({
       isGroup: true,
       conversationName: groupName,
-      groupAdmin: userEmail,
+      groupAdmin: user.email,
     });
     await ConversationMember.create({
-      emailId: userEmail,
+      emailId: user.email,
+      userName: user.name,
       conversationId: conversation.conversationId,
     });
 
@@ -97,6 +113,7 @@ const addToGroupService = async (
     }
     await ConversationMember.create({
       emailId: userEmail,
+      userName: user.name,
       conversationId: conversationId,
     });
   } catch (error) {

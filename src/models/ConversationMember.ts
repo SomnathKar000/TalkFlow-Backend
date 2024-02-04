@@ -10,6 +10,7 @@ import { Conversation } from "./Conversation";
 
 export class ConversationMember extends Model {
   public emailId!: string;
+  public userName!: string;
   public conversationId!: string;
   public readonly joinedDateTime!: Date;
 }
@@ -24,6 +25,10 @@ ConversationMember.init(
         model: User,
         key: "email",
       },
+    },
+    userName: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     conversationId: {
       type: DataTypes.UUID,

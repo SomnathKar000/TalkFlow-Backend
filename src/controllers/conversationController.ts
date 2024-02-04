@@ -11,12 +11,10 @@ import {
 
 const createConversation = async (req: AuthenticatedRequest, res: Response) => {
   const { senderEmail } = req.body;
-  const userId = req.user?.id;
-
-  const user = await findUserByEmailOrUserId({ userId });
+  const userId = req.user?.id!;
 
   const { conversationId } = await createOneToOneConversation(
-    user.email,
+    userId,
     senderEmail
   );
   res.status(200).json({
@@ -27,14 +25,9 @@ const createConversation = async (req: AuthenticatedRequest, res: Response) => {
 };
 const createGroupChat = async (req: AuthenticatedRequest, res: Response) => {
   const { groupName } = req.body;
-  const userId = req.user?.id;
+  const userId = req.user?.id!;
 
-  const user = await findUserByEmailOrUserId({ userId });
-
-  const { conversationId } = await createGroupConversation(
-    user.email,
-    groupName
-  );
+  const { conversationId } = await createGroupConversation(userId, groupName);
   res.status(200).json({
     success: true,
     message: "Group chat created successfully",

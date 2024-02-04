@@ -12,9 +12,6 @@ import { handleWebSocketConnection } from "./websocket/socketHandler";
 import { sequelize } from "./utils/database";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandling";
 import { rateLimiter } from "./middleware/rateLimiter";
-import { Conversation } from "./models/Conversation";
-import { ConversationMember } from "./models/ConversationMember";
-import { Message } from "./models/Message";
 
 const app = express();
 const server = http.createServer(app);
