@@ -30,10 +30,14 @@ const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
   const { message } = req.body;
   const { conversationId } = req.params;
 
-  await newMessage(senderId, message, conversationId);
+  const messageData = await newMessage(senderId, message, conversationId);
   res
     .status(200)
-    .json({ success: true, message: "Successfully sent a message" });
+    .json({
+      success: true,
+      message: "Successfully sent a message",
+      messageData,
+    });
 };
 
 const getConversation = async (req: AuthenticatedRequest, res: Response) => {

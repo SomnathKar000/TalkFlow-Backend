@@ -50,13 +50,19 @@ const newMessage = async (
       throw new CustomError("User does not exist", 400);
     }
     await conversation.update({ latestMessage: message_text });
-    await Message.create({
+    const MessageData = await Message.create({
       senderId,
       senderName: user.name,
       message_text,
       conversationId,
     });
-    return true;
+    const message = {
+      messageId: MessageData.messageId,
+      senderName: MessageData.senderName,
+      message_text,
+      date: MessageData.date,
+    };
+    return message;
   } catch (error) {
     throw new CustomError("Unable to send message", 400);
   }
