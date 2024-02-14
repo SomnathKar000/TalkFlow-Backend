@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+import { v4 } from "uuid";
 
 interface UserData {
   emailId: string;
@@ -18,6 +19,22 @@ function handleWebSocketConnection(socket: Socket) {
 
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", (newMessageInfo) => {
+    const users = newMessageInfo.ConversationMembers;
+    const senderEmail = newMessageInfo.senderEmail;
+    let message = newMessageInfo.message;
+
+    message.messageId = v4();
+    message.date = String(new Date());
+
+    users.map(
+      (user: { emailId: string; userName: string; avatar?: string }) => {
+        if (user.emailId === senderEmail) return;
+        socket.in(user.emailId).emit("message received", message);
+      }
+    );
+  });
 
   socket.off("setup", (user: UserData) => {
     console.log("client disconnected");
